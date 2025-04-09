@@ -1,8 +1,7 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
-import type { ReactElement } from 'react';
+import { useState, type ReactElement } from 'react';
 
 interface User {
   id: string;
@@ -103,23 +102,26 @@ export default function UsersListPage(): ReactElement {
           <div className="bg-white shadow overflow-hidden sm:rounded-md">
             <ul className="divide-y divide-gray-200">
               {filteredUsers.map((user) => (
-                <li
-                  key={user.id}
-                  onClick={() => handleUserClick(user.id)}
-                  className="hover:bg-gray-50 cursor-pointer"
-                >
+                <li key={user.id} onClick={() => handleUserClick(user.id)} className="cursor-pointer hover:bg-gray-50">
                   <div className="px-4 py-4 sm:px-6">
                     <div className="flex items-center justify-between">
                       <div className="flex-1 min-w-0">
-                        <h3 className="text-lg font-medium text-gray-900 truncate">
-                          {user.name}
-                        </h3>
+                        <h3 className="text-lg font-medium text-gray-900 truncate">{user.name}</h3>
                         <p className="mt-1 text-sm text-gray-500">
-                          年齢: {user.age}歳 / 要介護度: {user.careLevel}
+                          {user.age}歳 / {user.careLevel}
                         </p>
                       </div>
+                      <div className="ml-4 flex-shrink-0">
+                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800">
+                          次回訪問: {user.nextVisit}
+                        </span>
+                      </div>
+                    </div>
+                    <div className="mt-2">
                       <div className="text-sm text-gray-500">
-                        最終訪問日: {user.lastVisit}
+                        <p>住所: {user.address}</p>
+                        <p>前回訪問: {user.lastVisit}</p>
+                        <p>認定期間: {user.certificationPeriod}</p>
                       </div>
                     </div>
                   </div>

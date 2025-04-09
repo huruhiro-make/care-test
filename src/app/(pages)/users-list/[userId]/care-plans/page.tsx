@@ -1,17 +1,9 @@
 'use client';
 
-import { useState } from 'react';
-import type { ReactElement } from 'react';
+import { useState, type ReactElement } from 'react';
 
 import CarePlanCopyModal from '@/components/CarePlanCopyModal';
 import CarePlanHeader from '@/components/CarePlanHeader';
-
-interface CarePlan {
-  id: string;
-  title: string;
-  description: string;
-  createdAt: string;
-}
 
 export default function CarePlansPage(): ReactElement {
   const [isCopyModalOpen, setIsCopyModalOpen] = useState(false);

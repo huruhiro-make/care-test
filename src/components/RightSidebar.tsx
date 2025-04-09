@@ -1,7 +1,6 @@
 'use client';
 
-import { useState } from 'react';
-import type { ReactElement } from 'react';
+import { useState, type ReactElement } from 'react';
 import { useDrag } from 'react-dnd';
 
 interface Example {
@@ -104,8 +103,8 @@ export default function RightSidebar({ screenType }: RightSidebarProps): ReactEl
     return (
       <div
         ref={drag as unknown as React.RefObject<HTMLDivElement>}
-        className={`p-2 mb-2 rounded cursor-move ${
-          isDragging ? 'bg-emerald-100' : 'bg-white hover:bg-gray-50'
+        className={`p-2 mb-2 bg-white rounded shadow cursor-move ${
+          isDragging ? 'opacity-50' : ''
         }`}
       >
         {example.content}
@@ -113,30 +112,30 @@ export default function RightSidebar({ screenType }: RightSidebarProps): ReactEl
     );
   };
 
+  const categories = Array.from(new Set(examples.map((example) => example.category)));
+
   return (
-    <div className="w-64 bg-gray-50 p-4 border-l">
+    <div className="w-64 bg-gray-50 p-4 h-full overflow-y-auto">
       <h2 className="text-lg font-semibold mb-4">例文</h2>
-      <div className="space-y-4">
-        {Array.from(new Set(examples.map((e) => e.category))).map((category) => (
-          <div key={category}>
-            <button
-              onClick={() => toggleCategory(category)}
-              className="w-full text-left font-medium text-gray-700 hover:text-emerald-600"
-            >
-              {category}
-            </button>
-            {expandedCategories.has(category) && (
-              <div className="mt-2 pl-2">
-                {examples
-                  .filter((e) => e.category === category)
-                  .map((example) => (
-                    <DraggableExample key={example.id} example={example} />
-                  ))}
-              </div>
-            )}
-          </div>
-        ))}
-      </div>
+      {categories.map((category) => (
+        <div key={category} className="mb-4">
+          <button
+            onClick={(): void => toggleCategory(category)}
+            className="w-full text-left font-medium text-gray-700 hover:text-emerald-600 focus:outline-none"
+          >
+            {category}
+          </button>
+          {expandedCategories.has(category) && (
+            <div className="mt-2">
+              {examples
+                .filter((example) => example.category === category)
+                .map((example) => (
+                  <DraggableExample key={example.id} example={example} />
+                ))}
+            </div>
+          )}
+        </div>
+      ))}
     </div>
   );
 }

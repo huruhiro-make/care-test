@@ -1,7 +1,6 @@
 'use client';
 
-import { useState } from 'react';
-import type { ReactElement } from 'react';
+import { useState, type ReactElement } from 'react';
 
 import CarePlanForm from '@/components/CarePlanForm';
 import CarePlanHeader from '@/components/CarePlanHeader';

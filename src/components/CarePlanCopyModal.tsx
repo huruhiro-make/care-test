@@ -1,7 +1,6 @@
 'use client';
 
-import { useState } from 'react';
-import type { ReactElement } from 'react';
+import { useState, type ReactElement } from 'react';
 
 interface CarePlanCopyModalProps {
   isOpen: boolean;
@@ -40,7 +39,7 @@ export default function CarePlanCopyModal({
               type="text"
               id="title"
               value={formData.title}
-              onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+              onChange={(e): void => setFormData({ ...formData, title: e.target.value })}
               className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500"
               required
             />
@@ -52,7 +51,7 @@ export default function CarePlanCopyModal({
             <textarea
               id="description"
               value={formData.description}
-              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+              onChange={(e): void => setFormData({ ...formData, description: e.target.value })}
               className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500"
               rows={3}
             />
