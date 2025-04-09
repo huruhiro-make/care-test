@@ -61,7 +61,7 @@ export default function CarePlanTable2(): ReactElement {
     );
   };
 
-  const createDropTarget = (id: number, field: keyof Row) => {
+  const createDropTarget = (id: number, field: keyof Row): { isOver: boolean; drop: React.RefObject<HTMLDivElement> } => {
     const [{ isOver }, drop] = useDrop<DropItem, void, { isOver: boolean }>(() => ({
       accept: 'EXAMPLE',
       drop: (item) => {

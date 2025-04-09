@@ -26,6 +26,13 @@ export default function CarePlanForm(): ReactElement {
     supportContent: '',
   });
 
+  const handleChange = (field: keyof FormData, value: string): void => {
+    setFormData((prev) => ({
+      ...prev,
+      [field]: value,
+    }));
+  };
+
   const [{ isOver }, drop] = useDrop<DropItem, void, { isOver: boolean }>(() => ({
     accept: 'EXAMPLE',
     drop: (item) => {
@@ -49,13 +56,6 @@ export default function CarePlanForm(): ReactElement {
       isOver: !!monitor.isOver(),
     }),
   }));
-
-  const handleChange = (field: keyof FormData, value: string): void => {
-    setFormData((prev) => ({
-      ...prev,
-      [field]: value,
-    }));
-  };
 
   return (
     <div className="space-y-6">

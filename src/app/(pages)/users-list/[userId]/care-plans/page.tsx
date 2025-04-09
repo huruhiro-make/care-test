@@ -15,18 +15,13 @@ interface CarePlan {
 }
 
 export default function CarePlansPage(): ReactElement {
-  const params = useParams();
   const [isCopyModalOpen, setIsCopyModalOpen] = useState(false);
-  const [selectedCarePlan, setSelectedCarePlan] = useState<CarePlan | null>(null);
 
   const handleCopyClick = (carePlan: CarePlan): void => {
-    setSelectedCarePlan(carePlan);
     setIsCopyModalOpen(true);
   };
 
-  const handleCopy = (data: { title: string; description: string }): void => {
-    // TODO: コピー処理の実装
-    console.log('Copying care plan:', data);
+  const handleCopy = (): void => {
     setIsCopyModalOpen(false);
   };
 

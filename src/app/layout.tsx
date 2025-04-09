@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
+
 import './globals.css';
 import DndWrapper from '@/components/DndWrapper';
 import Sidebar from '@/components/Sidebar';

@@ -103,7 +103,7 @@ export default function RightSidebar({ screenType }: RightSidebarProps): ReactEl
 
     return (
       <div
-        ref={drag}
+        ref={drag as unknown as React.RefObject<HTMLDivElement>}
         className={`p-2 mb-2 rounded cursor-move ${
           isDragging ? 'bg-emerald-100' : 'bg-white hover:bg-gray-50'
         }`}
