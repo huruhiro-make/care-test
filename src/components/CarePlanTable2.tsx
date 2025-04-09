@@ -182,7 +182,7 @@ export default function CarePlanTable2(): ReactElement {
       collect: (monitor) => ({
         isOver: monitor.isOver(),
       }),
-    }), [rows]);
+    }), []);
 
     return { isOver, drop };
   };
