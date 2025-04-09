@@ -1,14 +1,14 @@
 'use client';
 
+import type { ReactElement } from 'react';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
-import type { ReactNode } from 'react';
 
 interface DndWrapperProps {
-  children: ReactNode;
+  children: React.ReactNode;
 }
 
-export default function DndWrapper({ children }: DndWrapperProps): JSX.Element {
+export default function DndWrapper({ children }: DndWrapperProps): ReactElement {
   return (
     <DndProvider backend={HTML5Backend}>
       {children}

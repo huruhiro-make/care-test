@@ -1,31 +1,43 @@
 'use client';
 
-import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { useState } from 'react';
 import type { ReactElement } from 'react';
 
-interface ExampleFormData {
+interface FormData {
   title: string;
-  content: string;
-  category: string;
+  description: string;
 }
 
 export default function NewExamplePage(): ReactElement {
   const router = useRouter();
-  const [formData, setFormData] = useState<ExampleFormData>({
+  const [formData, setFormData] = useState<FormData>({
     title: '',
-    content: '',
-    category: '意向'
+    description: ''
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault();
-    // TODO: ここで文例を保存する処理を実装
-    console.log('保存する文例:', formData);
-    router.push('/plan');
+    try {
+      const response = await fetch('/api/examples', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to create example');
+      }
+
+      router.push('/plan/example');
+    } catch (error) {
+      console.error('Error creating example:', error);
+    }
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>): void => {
     const { name, value } = e.target;
     setFormData(prev => ({
       ...prev,
@@ -34,75 +46,46 @@ export default function NewExamplePage(): ReactElement {
   };
 
   return (
-    <div className="max-w-4xl mx-auto my-8">
-      <div className="bg-white rounded-lg shadow-lg border border-gray-100 p-8">
-        <h1 className="text-2xl font-bold text-emerald-800 mb-8">新規文例の追加</h1>
-        
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div className="space-y-3">
-            <label className="block font-semibold text-emerald-800">
-              タイトル
-            </label>
-            <input
-              type="text"
-              name="title"
-              value={formData.title}
-              onChange={handleChange}
-              className="w-full border border-emerald-200 rounded-lg px-4 py-3 text-emerald-700 focus:ring-2 focus:ring-emerald-200 focus:outline-none"
-              placeholder="文例のタイトルを入力してください"
-              required
-            />
-          </div>
-
-          <div className="space-y-3">
-            <label className="block font-semibold text-emerald-800">
-              カテゴリ
-            </label>
-            <select
-              name="category"
-              value={formData.category}
-              onChange={handleChange}
-              className="w-full border border-emerald-200 rounded-lg px-4 py-3 text-emerald-700 focus:ring-2 focus:ring-emerald-200 focus:outline-none"
-              required
-            >
-              <option value="意向">意向</option>
-              <option value="方針">方針</option>
-              <option value="目標">目標</option>
-              <option value="分析">分析</option>
-            </select>
-          </div>
-
-          <div className="space-y-3">
-            <label className="block font-semibold text-emerald-800">
-              内容
-            </label>
-            <textarea
-              name="content"
-              value={formData.content}
-              onChange={handleChange}
-              className="w-full border border-emerald-200 rounded-lg px-4 py-3 text-emerald-700 focus:ring-2 focus:ring-emerald-200 focus:outline-none min-h-[200px] resize-y"
-              placeholder="文例の内容を入力してください"
-              required
-            />
-          </div>
-
-          <div className="flex justify-end space-x-4">
-            <button
-              type="button"
-              onClick={() => router.push('/plan')}
-              className="px-6 py-2 border border-emerald-200 rounded-lg text-emerald-700 hover:bg-emerald-50 transition-colors duration-200"
-            >
-              キャンセル
-            </button>
-            <button
-              type="submit"
-              className="px-6 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors duration-200"
-            >
-              保存
-            </button>
-          </div>
-        </form>
-      </div>
+    <div className="max-w-2xl mx-auto p-6">
+      <h1 className="text-2xl font-bold mb-6">新規例文作成</h1>
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <div>
+          <label htmlFor="title" className="block text-sm font-medium text-gray-700">
+            タイトル
+          </label>
+          <input
+            type="text"
+            id="title"
+            name="title"
+            value={formData.title}
+            onChange={handleChange}
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500"
+            required
+          />
+        </div>
+        <div>
+          <label htmlFor="description" className="block text-sm font-medium text-gray-700">
+            説明
+          </label>
+          <textarea
+            id="description"
+            name="description"
+            value={formData.description}
+            onChange={handleChange}
+            rows={4}
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500"
+            required
+          />
+        </div>
+        <div className="flex justify-end">
+          <button
+            type="submit"
+            className="bg-emerald-600 text-white px-4 py-2 rounded-md hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2"
+          >
+            作成
+          </button>
+        </div>
+      </form>
     </div>
   );
 } 

@@ -8,7 +8,7 @@ import CarePlanHeader from '@/components/CarePlanHeader';
 import CarePlanTable2 from '@/components/CarePlanTable2';
 import RightSidebar from '@/components/RightSidebar';
 
-export default function PlanPage(): ReactElement {
+export default function CarePlanDetailPage(): ReactElement {
   const [activeTab, setActiveTab] = useState<'form' | 'table'>('form');
 
   return (
