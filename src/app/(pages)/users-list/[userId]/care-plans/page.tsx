@@ -1,6 +1,5 @@
 'use client';
 
-import { useParams } from 'next/navigation';
 import { useState } from 'react';
 import type { ReactElement } from 'react';
 
@@ -17,7 +16,7 @@ interface CarePlan {
 export default function CarePlansPage(): ReactElement {
   const [isCopyModalOpen, setIsCopyModalOpen] = useState(false);
 
-  const handleCopyClick = (carePlan: CarePlan): void => {
+  const handleCopyClick = (): void => {
     setIsCopyModalOpen(true);
   };
 
@@ -55,14 +54,7 @@ export default function CarePlansPage(): ReactElement {
                       </div>
                       <div className="flex space-x-2">
                         <button
-                          onClick={() =>
-                            handleCopyClick({
-                              id: id.toString(),
-                              title: `介護計画書 ${id}`,
-                              description: '',
-                              createdAt: `2024-03-${id}`,
-                            })
-                          }
+                          onClick={handleCopyClick}
                           className="text-emerald-600 hover:text-emerald-900"
                         >
                           コピー

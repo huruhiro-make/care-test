@@ -19,6 +19,36 @@ interface DropItem {
   content: string;
 }
 
+interface DropTargetProps {
+  id: number;
+  field: keyof Row;
+  onDrop: (id: number, field: keyof Row, value: string) => void;
+  children: React.ReactNode;
+}
+
+const DropTarget = ({ id, field, onDrop, children }: DropTargetProps): ReactElement => {
+  const [{ isOver }, drop] = useDrop<DropItem, void, { isOver: boolean }>(() => ({
+    accept: 'EXAMPLE',
+    drop: (item) => {
+      onDrop(id, field, item.content);
+    },
+    collect: (monitor) => ({
+      isOver: !!monitor.isOver(),
+    }),
+  }));
+
+  return (
+    <div
+      ref={drop as unknown as React.RefObject<HTMLDivElement>}
+      className={`p-2 border rounded ${
+        isOver ? 'border-emerald-500 bg-emerald-50' : 'border-gray-300'
+      }`}
+    >
+      {children}
+    </div>
+  );
+};
+
 export default function CarePlanTable2(): ReactElement {
   const [rows, setRows] = useState<Row[]>([
     {
@@ -61,20 +91,6 @@ export default function CarePlanTable2(): ReactElement {
     );
   };
 
-  const createDropTarget = (id: number, field: keyof Row): { isOver: boolean; drop: React.RefObject<HTMLDivElement> } => {
-    const [{ isOver }, drop] = useDrop<DropItem, void, { isOver: boolean }>(() => ({
-      accept: 'EXAMPLE',
-      drop: (item) => {
-        updateRow(id, field, item.content);
-      },
-      collect: (monitor) => ({
-        isOver: !!monitor.isOver(),
-      }),
-    }));
-
-    return { isOver, drop: drop as unknown as React.RefObject<HTMLDivElement> };
-  };
-
   return (
     <div className="overflow-x-auto">
       <table className="min-w-full divide-y divide-gray-200">
@@ -101,103 +117,64 @@ export default function CarePlanTable2(): ReactElement {
           </tr>
         </thead>
         <tbody className="bg-white divide-y divide-gray-200">
-          {rows.map((row) => {
-            const intentionDrop = createDropTarget(row.id, 'intention');
-            const issuesDrop = createDropTarget(row.id, 'issues');
-            const longTermGoalsDrop = createDropTarget(row.id, 'longTermGoals');
-            const shortTermGoalsDrop = createDropTarget(row.id, 'shortTermGoals');
-            const serviceContentDrop = createDropTarget(row.id, 'serviceContent');
-            const serviceTypeDrop = createDropTarget(row.id, 'serviceType');
-
-            return (
-              <tr key={row.id}>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <div
-                    ref={intentionDrop.drop}
-                    className={`p-2 border rounded ${
-                      intentionDrop.isOver ? 'border-emerald-500 bg-emerald-50' : 'border-gray-300'
-                    }`}
-                  >
-                    <textarea
-                      value={row.intention}
-                      onChange={(e) => updateRow(row.id, 'intention', e.target.value)}
-                      className="w-full h-24 p-1 border-0 focus:ring-0"
-                    />
-                  </div>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <div
-                    ref={issuesDrop.drop}
-                    className={`p-2 border rounded ${
-                      issuesDrop.isOver ? 'border-emerald-500 bg-emerald-50' : 'border-gray-300'
-                    }`}
-                  >
-                    <textarea
-                      value={row.issues}
-                      onChange={(e) => updateRow(row.id, 'issues', e.target.value)}
-                      className="w-full h-24 p-1 border-0 focus:ring-0"
-                    />
-                  </div>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <div
-                    ref={longTermGoalsDrop.drop}
-                    className={`p-2 border rounded ${
-                      longTermGoalsDrop.isOver ? 'border-emerald-500 bg-emerald-50' : 'border-gray-300'
-                    }`}
-                  >
-                    <textarea
-                      value={row.longTermGoals}
-                      onChange={(e) => updateRow(row.id, 'longTermGoals', e.target.value)}
-                      className="w-full h-24 p-1 border-0 focus:ring-0"
-                    />
-                  </div>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <div
-                    ref={shortTermGoalsDrop.drop}
-                    className={`p-2 border rounded ${
-                      shortTermGoalsDrop.isOver ? 'border-emerald-500 bg-emerald-50' : 'border-gray-300'
-                    }`}
-                  >
-                    <textarea
-                      value={row.shortTermGoals}
-                      onChange={(e) => updateRow(row.id, 'shortTermGoals', e.target.value)}
-                      className="w-full h-24 p-1 border-0 focus:ring-0"
-                    />
-                  </div>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <div
-                    ref={serviceContentDrop.drop}
-                    className={`p-2 border rounded ${
-                      serviceContentDrop.isOver ? 'border-emerald-500 bg-emerald-50' : 'border-gray-300'
-                    }`}
-                  >
-                    <textarea
-                      value={row.serviceContent}
-                      onChange={(e) => updateRow(row.id, 'serviceContent', e.target.value)}
-                      className="w-full h-24 p-1 border-0 focus:ring-0"
-                    />
-                  </div>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <div
-                    ref={serviceTypeDrop.drop}
-                    className={`p-2 border rounded ${
-                      serviceTypeDrop.isOver ? 'border-emerald-500 bg-emerald-50' : 'border-gray-300'
-                    }`}
-                  >
-                    <textarea
-                      value={row.serviceType}
-                      onChange={(e) => updateRow(row.id, 'serviceType', e.target.value)}
-                      className="w-full h-24 p-1 border-0 focus:ring-0"
-                    />
-                  </div>
-                </td>
-              </tr>
-            );
-          })}
+          {rows.map((row) => (
+            <tr key={row.id}>
+              <td className="px-6 py-4 whitespace-nowrap">
+                <DropTarget id={row.id} field="intention" onDrop={updateRow}>
+                  <textarea
+                    value={row.intention}
+                    onChange={(e) => updateRow(row.id, 'intention', e.target.value)}
+                    className="w-full h-24 p-1 border-0 focus:ring-0"
+                  />
+                </DropTarget>
+              </td>
+              <td className="px-6 py-4 whitespace-nowrap">
+                <DropTarget id={row.id} field="issues" onDrop={updateRow}>
+                  <textarea
+                    value={row.issues}
+                    onChange={(e) => updateRow(row.id, 'issues', e.target.value)}
+                    className="w-full h-24 p-1 border-0 focus:ring-0"
+                  />
+                </DropTarget>
+              </td>
+              <td className="px-6 py-4 whitespace-nowrap">
+                <DropTarget id={row.id} field="longTermGoals" onDrop={updateRow}>
+                  <textarea
+                    value={row.longTermGoals}
+                    onChange={(e) => updateRow(row.id, 'longTermGoals', e.target.value)}
+                    className="w-full h-24 p-1 border-0 focus:ring-0"
+                  />
+                </DropTarget>
+              </td>
+              <td className="px-6 py-4 whitespace-nowrap">
+                <DropTarget id={row.id} field="shortTermGoals" onDrop={updateRow}>
+                  <textarea
+                    value={row.shortTermGoals}
+                    onChange={(e) => updateRow(row.id, 'shortTermGoals', e.target.value)}
+                    className="w-full h-24 p-1 border-0 focus:ring-0"
+                  />
+                </DropTarget>
+              </td>
+              <td className="px-6 py-4 whitespace-nowrap">
+                <DropTarget id={row.id} field="serviceContent" onDrop={updateRow}>
+                  <textarea
+                    value={row.serviceContent}
+                    onChange={(e) => updateRow(row.id, 'serviceContent', e.target.value)}
+                    className="w-full h-24 p-1 border-0 focus:ring-0"
+                  />
+                </DropTarget>
+              </td>
+              <td className="px-6 py-4 whitespace-nowrap">
+                <DropTarget id={row.id} field="serviceType" onDrop={updateRow}>
+                  <textarea
+                    value={row.serviceType}
+                    onChange={(e) => updateRow(row.id, 'serviceType', e.target.value)}
+                    className="w-full h-24 p-1 border-0 focus:ring-0"
+                  />
+                </DropTarget>
+              </td>
+            </tr>
+          ))}
         </tbody>
       </table>
       <div className="mt-4">
