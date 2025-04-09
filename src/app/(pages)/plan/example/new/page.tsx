@@ -1,91 +1,47 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import type { ReactElement } from 'react';
 
-interface FormData {
-  title: string;
-  description: string;
-}
+import CarePlanForm from '@/components/CarePlanForm';
+import CarePlanHeader from '@/components/CarePlanHeader';
+import CarePlanTable2 from '@/components/CarePlanTable2';
+import RightSidebar from '@/components/RightSidebar';
 
-export default function NewExamplePage(): ReactElement {
-  const router = useRouter();
-  const [formData, setFormData] = useState<FormData>({
-    title: '',
-    description: ''
-  });
-
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>): Promise<void> => {
-    e.preventDefault();
-    try {
-      const response = await fetch('/api/examples', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData),
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to create example');
-      }
-
-      router.push('/plan/example');
-    } catch (error) {
-      console.error('Error creating example:', error);
-    }
-  };
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>): void => {
-    const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
-  };
+export default function NewCarePlanPage(): ReactElement {
+  const [activeTab, setActiveTab] = useState<'form' | 'table'>('form');
 
   return (
-    <div className="max-w-2xl mx-auto p-6">
-      <h1 className="text-2xl font-bold mb-6">新規例文作成</h1>
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div>
-          <label htmlFor="title" className="block text-sm font-medium text-gray-700">
-            タイトル
-          </label>
-          <input
-            type="text"
-            id="title"
-            name="title"
-            value={formData.title}
-            onChange={handleChange}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500"
-            required
-          />
+    <div className="flex h-screen">
+      <div className="flex-1 overflow-auto">
+        <CarePlanHeader />
+        <div className="p-4">
+          <div className="mb-4">
+            <button
+              onClick={() => setActiveTab('form')}
+              className={`px-4 py-2 mr-2 rounded ${
+                activeTab === 'form'
+                  ? 'bg-emerald-600 text-white'
+                  : 'bg-gray-200 text-gray-700'
+              }`}
+            >
+              フォーム
+            </button>
+            <button
+              onClick={() => setActiveTab('table')}
+              className={`px-4 py-2 rounded ${
+                activeTab === 'table'
+                  ? 'bg-emerald-600 text-white'
+                  : 'bg-gray-200 text-gray-700'
+              }`}
+            >
+              テーブル
+            </button>
+          </div>
+          {activeTab === 'form' ? <CarePlanForm /> : <CarePlanTable2 />}
         </div>
-        <div>
-          <label htmlFor="description" className="block text-sm font-medium text-gray-700">
-            説明
-          </label>
-          <textarea
-            id="description"
-            name="description"
-            value={formData.description}
-            onChange={handleChange}
-            rows={4}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500"
-            required
-          />
-        </div>
-        <div className="flex justify-end">
-          <button
-            type="submit"
-            className="bg-emerald-600 text-white px-4 py-2 rounded-md hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2"
-          >
-            作成
-          </button>
-        </div>
-      </form>
+      </div>
+      <RightSidebar screenType={activeTab === 'form' ? 'table1' : 'table2'} />
     </div>
   );
 } 

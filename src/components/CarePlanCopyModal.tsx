@@ -6,7 +6,7 @@ import type { ReactElement } from 'react';
 interface CarePlanCopyModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onCopy: (title: string) => void;
+  onCopy: (data: { title: string; description: string }) => void;
 }
 
 export default function CarePlanCopyModal({
@@ -14,20 +14,23 @@ export default function CarePlanCopyModal({
   onClose,
   onCopy,
 }: CarePlanCopyModalProps): ReactElement {
-  const [title, setTitle] = useState('');
+  const [formData, setFormData] = useState({
+    title: '',
+    description: '',
+  });
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>): void => {
     e.preventDefault();
-    onCopy(title);
-    setTitle('');
+    onCopy(formData);
+    setFormData({ title: '', description: '' });
   };
 
-  if (!isOpen) return <></>;
+  if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
       <div className="bg-white p-6 rounded-lg w-96">
-        <h2 className="text-xl font-bold mb-4">介護計画書のコピー</h2>
+        <h2 className="text-xl font-bold mb-4">ケアプランをコピー</h2>
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
             <label htmlFor="title" className="block text-sm font-medium text-gray-700">
@@ -36,10 +39,22 @@ export default function CarePlanCopyModal({
             <input
               type="text"
               id="title"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
+              value={formData.title}
+              onChange={(e) => setFormData({ ...formData, title: e.target.value })}
               className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500"
               required
+            />
+          </div>
+          <div className="mb-4">
+            <label htmlFor="description" className="block text-sm font-medium text-gray-700">
+              説明
+            </label>
+            <textarea
+              id="description"
+              value={formData.description}
+              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500"
+              rows={3}
             />
           </div>
           <div className="flex justify-end space-x-2">

@@ -5,13 +5,7 @@ import type { ReactElement } from 'react';
 import { useDrag } from 'react-dnd';
 
 interface Example {
-  id: string;
-  category: string;
-  content: string;
-}
-
-interface DragItem {
-  type: string;
+  id: number;
   category: string;
   content: string;
 }
@@ -23,8 +17,71 @@ interface RightSidebarProps {
 export default function RightSidebar({ screenType }: RightSidebarProps): ReactElement {
   const [expandedCategories, setExpandedCategories] = useState<Set<string>>(new Set());
 
+  const table1Examples: Example[] = [
+    {
+      id: 1,
+      category: '利用者意向',
+      content: '自宅での生活を継続したい',
+    },
+    {
+      id: 2,
+      category: '家族意向',
+      content: '家族の負担を軽減したい',
+    },
+    {
+      id: 3,
+      category: '課題分析',
+      content: 'ADLの低下により、日常生活に支障が出ている',
+    },
+    {
+      id: 4,
+      category: '支援方針',
+      content: 'ADLの維持・改善を図り、自宅での生活を継続できるように支援する',
+    },
+    {
+      id: 5,
+      category: '支援内容',
+      content: '理学療法士による運動機能の評価と訓練',
+    },
+  ];
+
+  const table2Examples: Example[] = [
+    {
+      id: 1,
+      category: '利用者意向',
+      content: '自宅での生活を継続したい',
+    },
+    {
+      id: 2,
+      category: '課題分析',
+      content: 'ADLの低下により、日常生活に支障が出ている',
+    },
+    {
+      id: 3,
+      category: '長期目標',
+      content: '3ヶ月以内にADLを改善し、自宅での生活を継続できるようになる',
+    },
+    {
+      id: 4,
+      category: '短期目標',
+      content: '1ヶ月以内に基本的なADLを自立できるようになる',
+    },
+    {
+      id: 5,
+      category: 'サービス内容',
+      content: '理学療法士による運動機能の評価と訓練',
+    },
+    {
+      id: 6,
+      category: 'サービス種別',
+      content: '訪問リハビリテーション',
+    },
+  ];
+
+  const examples = screenType === 'table1' ? table1Examples : table2Examples;
+
   const toggleCategory = (category: string): void => {
-    setExpandedCategories(prev => {
+    setExpandedCategories((prev) => {
       const next = new Set(prev);
       if (next.has(category)) {
         next.delete(category);
@@ -35,93 +92,44 @@ export default function RightSidebar({ screenType }: RightSidebarProps): ReactEl
     });
   };
 
-  const table1Examples: Example[] = [
-    {
-      id: '1',
-      category: '利用者意向',
-      content: '自宅での生活を継続したい',
-    },
-    {
-      id: '2',
-      category: '家族意向',
-      content: '家族の負担を軽減したい',
-    },
-    {
-      id: '3',
-      category: '課題分析',
-      content: 'ADLの低下により、日常生活に支障が生じている',
-    },
-    {
-      id: '4',
-      category: '支援方針',
-      content: 'ADLの維持・改善を図り、在宅生活を継続する',
-    },
-    {
-      id: '5',
-      category: '支援内容',
-      content: '訪問介護サービスの利用',
-    },
-  ];
+  const DraggableExample = ({ example }: { example: Example }): ReactElement => {
+    const [{ isDragging }, drag] = useDrag(() => ({
+      type: 'EXAMPLE',
+      item: { category: example.category, content: example.content },
+      collect: (monitor) => ({
+        isDragging: !!monitor.isDragging(),
+      }),
+    }));
 
-  const table2Examples: Example[] = [
-    {
-      id: '1',
-      category: '利用者意向',
-      content: '自宅での生活を継続したい',
-    },
-    {
-      id: '2',
-      category: '課題',
-      content: 'ADLの低下により、日常生活に支障が生じている',
-    },
-    {
-      id: '3',
-      category: '長期目標',
-      content: 'ADLの維持・改善を図り、在宅生活を継続する',
-    },
-    {
-      id: '4',
-      category: '短期目標',
-      content: '3ヶ月以内にADLスコアを2点改善する',
-    },
-    {
-      id: '5',
-      category: 'サービス内容',
-      content: '訪問介護サービスの利用',
-    },
-    {
-      id: '6',
-      category: 'サービス種別',
-      content: '訪問介護',
-    },
-  ];
-
-  const examples = screenType === 'table1' ? table1Examples : table2Examples;
-
-  const categories = Array.from(new Set(examples.map(example => example.category)));
+    return (
+      <div
+        ref={drag}
+        className={`p-2 mb-2 rounded cursor-move ${
+          isDragging ? 'bg-emerald-100' : 'bg-white hover:bg-gray-50'
+        }`}
+      >
+        {example.content}
+      </div>
+    );
+  };
 
   return (
-    <div className="w-64 bg-white border-l border-gray-200 p-4 overflow-y-auto">
-      <h2 className="text-lg font-semibold text-gray-900 mb-4">例文</h2>
+    <div className="w-64 bg-gray-50 p-4 border-l">
+      <h2 className="text-lg font-semibold mb-4">例文</h2>
       <div className="space-y-4">
-        {categories.map(category => (
+        {Array.from(new Set(examples.map((e) => e.category))).map((category) => (
           <div key={category}>
             <button
               onClick={() => toggleCategory(category)}
-              className="w-full text-left px-4 py-2 bg-gray-50 rounded-md hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+              className="w-full text-left font-medium text-gray-700 hover:text-emerald-600"
             >
-              <div className="flex items-center justify-between">
-                <span className="font-medium text-gray-700">{category}</span>
-                <span className="text-gray-400">
-                  {expandedCategories.has(category) ? '−' : '+'}
-                </span>
-              </div>
+              {category}
             </button>
             {expandedCategories.has(category) && (
-              <div className="mt-2 space-y-2">
+              <div className="mt-2 pl-2">
                 {examples
-                  .filter(example => example.category === category)
-                  .map(example => (
+                  .filter((e) => e.category === category)
+                  .map((example) => (
                     <DraggableExample key={example.id} example={example} />
                   ))}
               </div>
@@ -129,30 +137,6 @@ export default function RightSidebar({ screenType }: RightSidebarProps): ReactEl
           </div>
         ))}
       </div>
-    </div>
-  );
-}
-
-function DraggableExample({ example }: { example: Example }): ReactElement {
-  const [{ isDragging }, drag] = useDrag(() => ({
-    type: 'EXAMPLE',
-    item: {
-      category: example.category,
-      content: example.content,
-    },
-    collect: (monitor) => ({
-      isDragging: monitor.isDragging(),
-    }),
-  }));
-
-  return (
-    <div
-      ref={drag}
-      className={`p-3 bg-white border border-gray-200 rounded-md cursor-move ${
-        isDragging ? 'opacity-50' : ''
-      }`}
-    >
-      <p className="text-sm text-gray-700">{example.content}</p>
     </div>
   );
 }
